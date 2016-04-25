@@ -10,8 +10,9 @@
   <body>
     <input id="pac-input" class="controls" type="text" placeholder="Enter a location">
 	<select id="fake-input" class="controls">
-		<option value="" disabled selected>Choose a preset</option>
-		<option value="0">Hurr Durr</option>
+		<option value="" selected>Choose a preset</option>
+		<option value="europe">Europe</option>
+		<option value="europe_small">Europe (small)</option>
 	</select>
 	<div id="locations">
 		<div class="location">
@@ -68,17 +69,14 @@
 			</div>
 			<div class="close"></div>
 		</div>
-				<div class="location">
-			<div class="name">
-				Baligrodzka 10, 48-303 Nysa, Polska
-			</div>
-			<div class="close"></div>
-		</div>
+
 	</div>
     <div id="map"></div>
 	
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
-    <script src="./gmaps.js"></script>
+	<script src="./gmaps_data.js"></script>
+    <script src="./gmaps_gui.js"></script>
+	<script src="./gmaps.js"></script>
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAxLy37AP73IL0TIrrF_Y-dDAv0Wxx_6iY&libraries=places&callback=initMap" async defer></script>
   </body>
 </html>

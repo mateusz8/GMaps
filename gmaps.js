@@ -1,7 +1,7 @@
 var map;
-var marker;
 var autocomplete;
-var locations;
+var locations = [];
+var markers = [];
 
 function initMap() {
 	map = new google.maps.Map(document.getElementById('map'), {
@@ -10,24 +10,9 @@ function initMap() {
 		mapTypeControl: false,
 		streetViewControl: false
 	});
-	initMarker();
 	initAutocomplete();
 
 	fakeData();
-}
-
-function initMarker() {
-	marker = new google.maps.Marker({
-		map: map,
-		anchorPoint: new google.maps.Point(0, -29)
-	});
-	/*marker.setIcon({
-		url: place.icon,
-		size: new google.maps.Size(71, 71),
-		origin: new google.maps.Point(0, 0),
-		anchor: new google.maps.Point(17, 34),
-		scaledSize: new google.maps.Size(35, 35)
-	});*/
 }
 
 function initAutocomplete() {
@@ -62,9 +47,48 @@ function fakeData() {
 	var bounds = new google.maps.LatLngBounds();
 	for(var i=0; i<locations.length; i++) {
 		var marker = new google.maps.Marker({position: locations[i].latLng, map: map, title: locations[i].name});
+		markers.push(marker);
 		bounds.extend(locations[i].latLng);
 	}
 	map.fitBounds(bounds);
+}
+
+function clearMarkers() {
+	$.each(markers, function(i, marker) {
+		marker.setMap(null);
+	});
+	markers = [];
+}
+
+function refreshMarkers() {
+	if (locations.length > 0) {
+		var bounds = new google.maps.LatLngBounds();
+		$.each(locations, function(i, loc) {
+			var position = new google.maps.LatLng(loc.lat, loc.lng);
+			markers.push(
+				new google.maps.Marker({
+					position: position,
+					map: map,
+					title: loc.name
+				})
+			);
+			bounds.extend(position);
+		});
+		map.fitBounds(bounds);
+	} else {
+		map.setCenter({lat: 0, lng: 0});
+		map.setZoom(2);
+	}
+}
+
+function loadPreset(key) {
+	clearMarkers();
+	if (key) {
+		locations = data[key].slice();
+	} else {
+		locations = [];
+	}
+	refreshMarkers();
 }
 
 //locations[i].name
@@ -217,3 +241,7 @@ function calculate_distance()
 		}
 		initMap();
 	  }*/
+
+$('#fake-input').on('change', function() {
+	loadPreset($(this).val());
+});

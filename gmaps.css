@@ -5,6 +5,7 @@ html, body {
 	font-family: Roboto;
 	font-size: 15px;
 	font-weight: 300;
+	overflow: hidden;
 }
 #map {
 	height: 100%;
@@ -39,12 +40,18 @@ html, body {
 
 #locations {
 	position: absolute;
-	top: 10px;
-	right: 10px;
+	top: 0;
+	right: -240px;
 	z-index: 1;
-	width: 260px;
+	width: 220px;
 	height: 80%;
     overflow: scroll;
+	padding: 10px 10px 10px 60px;
+	transition: right 0.6s, padding-left 0.6s;
+}
+#locations:hover {
+	padding-left: 0;
+	right: 0;
 }
 
 #locations::-webkit-scrollbar { 
