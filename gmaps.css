@@ -2,6 +2,9 @@ html, body {
 	height: 100%;
 	margin: 0;
 	padding: 0;
+	font-family: Roboto;
+	font-size: 15px;
+	font-weight: 300;
 }
 #map {
 	height: 100%;
@@ -17,19 +20,64 @@ html, body {
 	box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
 	position: absolute;
     z-index: 1;
+	background-color: #fff;
 }
 
 #pac-input {
-	background-color: #fff;
-	font-family: Roboto;
-	font-size: 15px;
-	font-weight: 300;
 	margin-left: 12px;
 	padding: 0 11px 0 13px;
 	text-overflow: ellipsis;
 	width: 300px;
 }
 
+#fake-input {
+	padding: 0 11px;
+	color: #999;
+	left: 320px;
+	width: 200px;
+}
+
+#locations {
+	position: absolute;
+	top: 10px;
+	right: 10px;
+	z-index: 1;
+	width: 260px;
+	height: 80%;
+    overflow: scroll;
+}
+
+#locations::-webkit-scrollbar { 
+    display: none; 
+}
+
+.location {
+	margin-bottom: 5px;
+	border: 1px solid transparent;
+	border-radius: 2px 0 0 2px;
+	box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	width: 100%;
+	padding: 10px 25px 10px 10px;
+	outline: none;
+	box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+	background-color: #fff;
+	position: relative;
+}
+.location .close:after {
+	content:'x';
+	position: absolute;
+	right: 5px;
+	top: 5px;
+	display: block;
+	width:20px;
+	height: 20px;
+	font-weight: 500;
+	text-align: center;
+	vertical-align: center;
+	cursor: pointer;
+}
+	
 #pac-input:focus {
 	border-color: #4d90fe;
 }
