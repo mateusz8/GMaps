@@ -98,7 +98,7 @@ function calculate_init()
 	{
 		generate_subset(init);
 	}
-	//calculate_Way(0,Math.pow(2,number_of_elements)-1);
+	calculate_Way(0,Math.pow(2,number_of_elements)-2);
 }
 //generowanie pokolei ktore zbiory ma liczyc odleglosci
 function generate_subset(k) //k - number of elements in subset
