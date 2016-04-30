@@ -1,13 +1,11 @@
-var number_of_elements=5;
-//var discancematrix_1=[][];
+var number_of_elements;//=5;
+var discancematrix_1;
+var results_matrix
+var previous_city
 
-var discancematrix_1 = new Array(number_of_elements);
-for (var i=0; i < number_of_elements; i++) {
-   discancematrix_1[i] = new Array(number_of_elements);
-}
+var previous_city2;//used sometimes to debug
 
-
-
+/*
 discancematrix_1[0][0]=0;
 discancematrix_1[0][1]=1;
 discancematrix_1[0][2]=2;
@@ -27,32 +25,45 @@ discancematrix_1[3][0]=5;
 discancematrix_1[3][1]=5;
 discancematrix_1[3][2]=3;
 discancematrix_1[3][3]=0;
-discancematrix_1[3][4]=3;
-discancematrix_1[4][0]=4;
-discancematrix_1[4][1]=2;
-discancematrix_1[4][2]=1;
-discancematrix_1[4][3]=12;
-discancematrix_1[4][4]=0;
+distancematrix_1[3][4]=3;
+distancematrix_1[4][0]=4;
+distancematrix_1[4][1]=2;
+distancematrix_1[4][2]=1;
+distancematrix_1[4][3]=12;
+distancematrix_1[4][4]=0;
+*/
 
-var results_matrix = new Array(number_of_elements);
-for (var i=0; i < number_of_elements; i++) {
-   results_matrix[i] = new Array(Math.pow
-	 (2,number_of_elements+1));
+
+
+function declare_some_tables()
+{
+	number_of_elements=locations.length;
+	distancematrix_1 = new Array(number_of_elements);
+	for (var i=0; i < number_of_elements; i++) {
+		distancematrix_1[i] = new Array(number_of_elements);
+	}
+	results_matrix = new Array(number_of_elements);
+	for (var i=0; i < number_of_elements; i++) {
+		results_matrix[i] = new Array(Math.pow
+		(2,number_of_elements+1));
+	}
+	previous_city = new Array(number_of_elements);
+	for (var i=0; i < number_of_elements; i++) {
+		previous_city[i] = new Array(Math.pow
+		(2,number_of_elements+1));
+	}
+	previous_city2 = new Array(number_of_elements+1);
 }
-var previous_city = new Array(number_of_elements);
-for (var i=0; i < number_of_elements; i++) {
-   previous_city[i] = new Array(Math.pow
-	 (2,number_of_elements+1));
-}
-var previous_city2 = new Array(number_of_elements+1);
+
+
 
 function calculate_Way(destination_city, subset)
 {
 	if((subset==0)||(subset==1))
 	{
-		results_matrix[destination_city][0]=discancematrix_1[destination_city][0];
+		results_matrix[destination_city][0]=distancematrix_1[destination_city][0];
 		previous_city[destination_city][0]=0;
-		return discancematrix_1[destination_city][0];
+		return distancematrix_1[destination_city][0];
 	}
 	else
 	{
@@ -76,8 +87,8 @@ function calculate_Way(destination_city, subset)
 		{
 			if(possible_subsets[i]==1)
 			{
-				//results_subsets[i]=discancematrix_1[destination_city][i]+calculate_Way(i, subset-Math.pow(2,i));
-				results_subsets[i]=discancematrix_1[destination_city][i]+results_matrix[i][subset-Math.pow(2,i)];
+				//results_subsets[i]=distancematrix_1[destination_city][i]+calculate_Way(i, subset-Math.pow(2,i));
+				results_subsets[i]=distancematrix_1[destination_city][i]+results_matrix[i][subset-Math.pow(2,i)];
 				if(minimum_city_value>results_subsets[i])
 				{
 					minimum_city_value=results_subsets[i];
@@ -134,12 +145,14 @@ function generate_subset(k) //k - number of elements in subset
 	}
 }
 
+
+//find_patch(0,Math.pow(2,number_of_elements)-2);
 function find_patch(destination_city,subset)
 {
 	if(subset>0)
 	{
 		find_patch(previous_city[destination_city][subset],subset-Math.pow(2,previous_city[destination_city][subset]));
 	}
-		var temp = 'from' + previous_city[destination_city][subset] + ' to ' + destination_city;
+		var temp = 'from ' + previous_city[destination_city][subset] + ' to ' + destination_city;
 		console.log(temp)
 }
