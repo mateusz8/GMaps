@@ -59,8 +59,9 @@ function calculateDistance() {
 	var nodes = locations.map(function(e){
 		return e.latLng
 	});
+	declare_some_tables();
 	var geocoder = new google.maps.Geocoder;
-        new google.maps.DistanceMatrixService.getDistanceMatrix({
+        new google.maps.DistanceMatrixService().getDistanceMatrix({
           origins: nodes,
           destinations: nodes,
           travelMode: google.maps.TravelMode.DRIVING,
@@ -79,6 +80,7 @@ function calculateDistance() {
 					for (var j = 0; j < results.length; j++) {
 						var temp = originList[i] + ' to ' + destinationList[j] + ': ' + results[j].distance.text;
 						console.log(temp);
+						distancematrix_1[i][j]=results[j].distance.value;//in meters
 					}
 				}
 			}
