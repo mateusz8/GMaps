@@ -146,12 +146,12 @@ function generate_subset(k) //k - number of elements in subset
 }
 
 
-//find_patch(0,Math.pow(2,number_of_elements)-2);
-function find_patch(destination_city,subset)
+//find_path(0,Math.pow(2,number_of_elements)-2);
+function find_path(destination_city,subset)
 {
 	if(subset>0)
 	{
-		find_patch(previous_city[destination_city][subset],subset-Math.pow(2,previous_city[destination_city][subset]));
+		find_path(previous_city[destination_city][subset],subset-Math.pow(2,previous_city[destination_city][subset]));
 	}
 		var temp = 'from ' + previous_city[destination_city][subset] + ' to ' + destination_city;
 		console.log(temp)
