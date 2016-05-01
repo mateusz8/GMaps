@@ -2,6 +2,9 @@ var map;
 var autocomplete;
 var locations = [];
 var directionsDisplay;
+var locations_origins;
+var locations_destinations;
+
 
 function initMap() {
 	map = new google.maps.Map(document.getElementById('map'), {
@@ -54,16 +57,49 @@ function generateId() {
 //locations[i].latLng.lat();
 //locations[i].latLng.lng();
 
+function calculateDistance()
+{
+	declare_some_tables();
+	for(var ii=0;ii*10<=locations.length;ii++)
+	{
+		locations_origins = null;
+		locations_origins = [];
+		for(var kk=0; (ii*10+kk<locations.length)&&(kk<10);kk++)
+		{
+			locations_origins[kk] = locations[ii*10+kk];
+		}
+		for(var jj=0;jj*10<locations.length;jj++)
+		{
+			locations_destinations = null;
+			locations_destinations = [];
+			for(var ll=0; (jj*10+ll<locations.length)&&(ll<10);ll++)
+			{
+				locations_destinations[ll] = locations[jj*10+ll];
+			}
+			calculateDistance2(ii,jj);
+		}
+	}
+}
 
-function calculateDistance() {
+
+function calculateDistance2(index_i_inc,index_j_inc) {
+	if((index_i_inc!=0)||(index_j_inc!=0))
+	{
+		wait_loop(10000);
+	}
+	var nodes_origins = locations_origins.map(function(e){
+		return e.latLng
+	});
+	var nodes_destinations = locations_destinations.map(function(e){
+		return e.latLng
+	});
 	var nodes = locations.map(function(e){
 		return e.latLng
 	});
-	declare_some_tables();
 	var geocoder = new google.maps.Geocoder;
         new google.maps.DistanceMatrixService().getDistanceMatrix({
-          origins: nodes,
-          destinations: nodes,
+          origins: nodes_origins,
+          destinations: nodes_destinations,
           travelMode: google.maps.TravelMode.DRIVING,
           unitSystem: google.maps.UnitSystem.METRIC,
           avoidHighways: false,
@@ -79,8 +115,10 @@ function calculateDistance() {
 					var results = response.rows[i].elements;
 					for (var j = 0; j < results.length; j++) {
 						var temp = originList[i] + ' to ' + destinationList[j] + ': ' + results[j].distance.text;
-						console.log(temp);
-						distancematrix_1[i][j]=results[j].distance.value;//in meters
+						//console.log(temp);
+						//distancematrix_1[i+index_i_inc*10][j+index_j_inc*10]=results[j].distance.value;//in meters
+						distancematrix_1[i+index_i_inc*10][j+index_j_inc*10]=results[j].duration.value//in s
+						console.log('i  '+index_i_inc+' j '+index_j_inc);
 					}
 				}
 			}
@@ -123,6 +161,21 @@ function drawRoute(route) {
 			}
 		});
   	}
+}
+function process_all()
+{
+calculateDistance();
+setTimeout(calculate_init, 60000);
+setTimeout(find_path, 90000,0,Math.pow(2,number_of_elements)-2);
+//drawRoute ...
+}
+function wait_loop(time_ms)
+{
+//used to not cross the given limit of queries
+  var date = new Date();
+  var curDate = null;
+  do { curDate = new Date(); }
+  while(curDate-date < time_ms);
 }
       
 /*
