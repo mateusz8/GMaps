@@ -60,7 +60,7 @@ function calculateDistance() {
 		return e.latLng
 	});
 	var geocoder = new google.maps.Geocoder;
-        new google.maps.DistanceMatrixService.getDistanceMatrix({
+        new google.maps.DistanceMatrixService().getDistanceMatrix({
           origins: nodes,
           destinations: nodes,
           travelMode: google.maps.TravelMode.DRIVING,
