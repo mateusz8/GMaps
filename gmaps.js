@@ -1,3 +1,5 @@
+var DISTANCE_MATRIX_SERVICE_DELAY = 15000;
+
 var map;
 var autocomplete;
 var locations = [];
@@ -15,7 +17,7 @@ function initMap() {
 	
 	initAutocomplete();
 
-	loadPreset('test');
+	loadPreset('europe5');
 }
 
 function addAutocompleteLocation() {
@@ -68,14 +70,13 @@ function calculateDistance()
 	initDistanceMatrix();
 	requestsToLoad = 0;
 	requestsCounter = 0;
-	for(var i=0;i*10<=locations.length;i++) {
-		for(var j=0;j*10<=locations.length;j++) {
+	for(var i=0;i*10<locations.length;i++) {
+		for(var j=0;j*10<locations.length;j++) {
 			loadDistanceMatrix(i,j);
 		}
 	}
 }
 
-var DISTANCE_MATRIX_SERVICE_DELAY = 10000;
 function loadDistanceMatrix(indexI,indexJ) {
 	setTimeout(function() {
 		console.log('loadDistanceMatrix(' + indexI + ',' + indexJ + ')');
@@ -133,7 +134,11 @@ function getLocation(id) {
 
 function process_all()
 {
-	calculateDistance();
+	if (locations.length > 20) {
+		alert('Limit of locations is 20.');
+	} else {
+		calculateDistance();
+	}
 }
 
 $('#fake-input').on('change', function() {

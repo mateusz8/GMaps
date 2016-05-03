@@ -1,5 +1,5 @@
 var data = {
-	'europe' : [
+	'europe20' : [
 		{id: 1, name: "Tirana, Albania", latLng: new google.maps.LatLng(41.31666667, 19.816667)},
 		{id: 2, name: "Andorra la Vella, Andorra", latLng: new google.maps.LatLng(42.5, 1.516667)},
 		{id: 3, name: "Vienna, Austria", latLng: new google.maps.LatLng(48.2, 16.366667)},
@@ -9,52 +9,31 @@ var data = {
 		{id: 7, name: "Sofia, Bulgaria", latLng: new google.maps.LatLng(42.68333333, 23.316667)},
 		{id: 8, name: "Zagreb, Croatia", latLng: new google.maps.LatLng(45.8, 16)},
 		{id: 9, name: "Prague, Czech Republic", latLng: new google.maps.LatLng(50.08333333, 14.466667)},
-		{id: 10, name: "Copenhagen, Denmark", latLng: new google.maps.LatLng(55.66666667, 12.583333)},
 		{id: 11, name: "Tallinn, Estonia", latLng: new google.maps.LatLng(59.43333333, 24.716667)},
-		{id: 12, name: "Helsinki, Finland", latLng: new google.maps.LatLng(60.16666667, 24.933333)},
 		{id: 13, name: "Paris, France", latLng: new google.maps.LatLng(48.86666667, 2.333333)},
-		{id: 14, name: "Berlin, Germany", latLng: new google.maps.LatLng(52.51666667, 13.4)},
 		{id: 15, name: "Athens, Greece", latLng: new google.maps.LatLng(37.98333333, 23.733333)},
-		{id: 16, name: "Budapest, Hungary", latLng: new google.maps.LatLng(47.5, 19.083333)},
 		{id: 17, name: "Dublin, Ireland", latLng: new google.maps.LatLng(53.31666667, -6.233333)},
-		{id: 18, name: "Rome, Italy", latLng: new google.maps.LatLng(41.9, 12.483333)},
 		{id: 19, name: "Riga, Latvia", latLng: new google.maps.LatLng(56.95, 24.1)},
-		{id: 20, name: "Vilnius, Lithuania", latLng: new google.maps.LatLng(54.68333333, 25.316667)},
 		{id: 21, name: "Skopje, Macedonia", latLng: new google.maps.LatLng(42, 21.433333)},
-		{id: 22, name: "Podgorica, Montenegro", latLng: new google.maps.LatLng(42.43333333, 19.266667)},
 		{id: 23, name: "Amsterdam, Netherlands", latLng: new google.maps.LatLng(52.35, 4.916667)},
 		{id: 24, name: "Oslo, Norway", latLng: new google.maps.LatLng(59.91666667, 10.75)},
-		{id: 25, name: "Warsaw, Poland", latLng: new google.maps.LatLng(52.25, 21)},
 		{id: 26, name: "Lisbon, Portugal", latLng: new google.maps.LatLng(38.71666667, -9.133333)},
-		{id: 27, name: "Bucharest, Romania", latLng: new google.maps.LatLng(44.43333333, 26.1)},
 		{id: 28, name: "Belgrade, Serbia", latLng: new google.maps.LatLng(44.83333333, 20.5)},
-		{id: 29, name: "Bratislava, Slovakia", latLng: new google.maps.LatLng(48.15, 17.116667)},
-		{id: 30, name: "Ljubljana, Slovenia", latLng: new google.maps.LatLng(46.05, 14.516667)},
-		{id: 31, name: "Madrid, Spain", latLng: new google.maps.LatLng(40.4, -3.683333)},
-		{id: 32, name: "Stockholm, Sweden", latLng: new google.maps.LatLng(59.33333333, 18.05)},
-		{id: 33, name: "Bern, Switzerland", latLng: new google.maps.LatLng(46.91666667, 7.466667)},
-		{id: 34, name: "Ankara, Turkey", latLng: new google.maps.LatLng(39.93333333, 32.866667)},
-		{id: 35, name: "Kyiv, Ukraine", latLng: new google.maps.LatLng(50.43333333, 30.516667)},
-		{id: 36, name: "London, United Kingdom", latLng: new google.maps.LatLng(51.5, -0.083333)}
+		{id: 30, name: "Ljubljana, Slovenia", latLng: new google.maps.LatLng(46.05, 14.516667)}
 	],
-	'europe_small' : [
+	'europe10' : [
 		{id: 1, name: "Vienna, Austria", latLng: new google.maps.LatLng(48.2, 16.366667)},
-		{id: 2, name: "Prague, Czech Republic", latLng: new google.maps.LatLng(50.08333333, 14.466667)},
 		{id: 3, name: "Copenhagen, Denmark", latLng: new google.maps.LatLng(55.66666667, 12.583333)},
 		{id: 4, name: "Paris, France", latLng: new google.maps.LatLng(48.86666667, 2.333333)},
-		{id: 5, name: "Berlin, Germany", latLng: new google.maps.LatLng(52.51666667, 13.4)},
 		{id: 6, name: "Athens, Greece", latLng: new google.maps.LatLng(37.98333333, 23.733333)},
 		{id: 7, name: "Budapest, Hungary", latLng: new google.maps.LatLng(47.5, 19.083333)},
 		{id: 8, name: "Rome, Italy", latLng: new google.maps.LatLng(41.9, 12.483333)},
 		{id: 9, name: "Amsterdam, Netherlands", latLng: new google.maps.LatLng(52.35, 4.916667)},
-		{id: 10, name: "Warsaw, Poland", latLng: new google.maps.LatLng(52.25, 21)},
 		{id: 11, name: "Lisbon, Portugal", latLng: new google.maps.LatLng(38.71666667, -9.133333)},
-		{id: 12, name: "Bucharest, Romania", latLng: new google.maps.LatLng(44.43333333, 26.1)},
 		{id: 13, name: "Bratislava, Slovakia", latLng: new google.maps.LatLng(48.15, 17.116667)},
-		{id: 14, name: "Madrid, Spain", latLng: new google.maps.LatLng(40.4, -3.683333)},
 		{id: 15, name: "London, United Kingdom", latLng: new google.maps.LatLng(51.5, -0.083333)}
 	],
-	'test' : [
+	'europe5' : [
 		{id: 1, name: "Vienna, Austria", latLng: new google.maps.LatLng(48.2, 16.366667)},
 		{id: 2, name: "Prague, Czech Republic", latLng: new google.maps.LatLng(50.08333333, 14.466667)},
 		{id: 3, name: "Copenhagen, Denmark", latLng: new google.maps.LatLng(55.66666667, 12.583333)},
