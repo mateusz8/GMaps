@@ -1,5 +1,6 @@
 var $locations = $('#locations');
 var markers = [];
+var directionsDisplay = [];
 
 function addLocation(loc) {
 	var elem = $('<div class="location" data-id='+loc.id+'><div class="name">'+loc.name+'</div><div class="close"></div></div>');
@@ -66,7 +67,49 @@ function refreshLocations() {
 	});
 }
 
+function clearRoute() {
+	$.each(directionsDisplay, function(i, directions) {
+		directions.setMap(null);
+	});
+	directionsDisplay = [];	
+}
+
+function drawRoute(route) {
+	clearRoute();
+	for(var i=0;i*8<=route.length;i++) {
+		drawRoutePart(route.slice(i*8-i, (i+1)*8-i));
+	}
+}
+
+function drawRoutePart(route) {
+	if (route.length > 0) {
+		new google.maps.DirectionsService().route({
+			origin: route[0].latLng,
+			destination: route[route.length - 1].latLng,
+			waypoints: route
+						.splice(1, route.length - 2)
+						.map(function(loc) {
+							return {location: loc.latLng, stopover: true};
+						}),
+			optimizeWaypoints: false,
+			travelMode: google.maps.TravelMode.DRIVING
+		},
+		function(response, status) {
+			if (status == google.maps.DirectionsStatus.OK) {
+				var directions = new google.maps.DirectionsRenderer({
+					suppressMarkers:true
+				});
+				directions.setMap(map);
+				directions.setDirections(response);
+				directionsDisplay.push(directions);
+				refreshMarkers();
+			}
+		});
+  	}
+}
+
 function refreshView() {
+	clearRoute();
 	refreshMarkers();
 	refreshLocations();
 }

@@ -88,3 +88,12 @@ html, body {
 #pac-input:focus {
 	border-color: #4d90fe;
 }
+
+#calculate {
+	position: absolute;
+    left: 530px;
+    top: 10px;
+    z-index: 1;
+	height: 32px;
+	padding: 0 10px;
+}
