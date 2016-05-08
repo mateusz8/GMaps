@@ -5,7 +5,7 @@ var autocomplete;
 var locations = [];
 var locations_origins;
 var locations_destinations;
-
+var beginTime = new Date().getTime();
 
 function initMap() {
 	map = new google.maps.Map(document.getElementById('map'), {
