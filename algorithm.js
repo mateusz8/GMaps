@@ -1,8 +1,8 @@
 var number_of_elements;
 var distancematrix_1;
-var results_matrix
-var previous_city
-
+var results_matrix;
+var previous_city;
+var timeCityMatrix;
 
 function initResultsMatrix() {
 	results_matrix = new Array(number_of_elements);
@@ -18,13 +18,23 @@ function initPrevCityMatrix() {
 		(2,number_of_elements+1));
 	}	
 }
+function initTimeCityMatrix()
+{
+	timeCityMatrix = new Array(number_of_elements);
+	for (var i=0; i < number_of_elements; i++) {
+		timeCityMatrix[i] = new Array(Math.pow
+		(2,number_of_elements+1));
+	}	
+}
 
 function calculate_Way(destination_city, subset)
 {
 	if((subset==0)||(subset==1))
 	{
-		results_matrix[destination_city][0]=distancematrix_1[destination_city][0].distance;
+		results_matrix[destination_city][0]=distancematrix_1[destination_city][0].distance 
+		+ ifOnTime(destination_city,beginTime+distancematrix_1[destination_city][0].duration*1000);
 		previous_city[destination_city][0]=0;
+		timeCityMatrix[destination_city][0]=beginTime+distancematrix_1[destination_city][0].duration*1000;
 		return distancematrix_1[destination_city][0].distance;
 	}
 	else
@@ -45,22 +55,26 @@ function calculate_Way(destination_city, subset)
 		}
 		var minimum_city_index=0;
 		var minimum_city_value=Number.MAX_VALUE;
+		var minimum_city_time=0;
 		for(var i=1;i<=number_of_elements;i++)
 		{
 			if(possible_subsets[i]==1)
 			{
 				//results_subsets[i]=distancematrix_1[destination_city][i]+calculate_Way(i, subset-Math.pow(2,i));
-				results_subsets[i]=distancematrix_1[destination_city][i].distance+results_matrix[i][subset-Math.pow(2,i)];
+				results_subsets[i]=distancematrix_1[destination_city][i].distance+results_matrix[i][subset-Math.pow(2,i)]
+				+ ifOnTime(destination_city,timeCityMatrix[i][subset-Math.pow(2,i)]+distancematrix_1[destination_city][0].duration*1000);
 				if(minimum_city_value>results_subsets[i])
 				{
 					minimum_city_value=results_subsets[i];
 					minimum_city_index=i;
+					minimum_city_time=timeCityMatrix[i][subset-Math.pow(2,i)]+distancematrix_1[destination_city][i].duration*1000;
 					//dodac droge
 				}
 			}
 		}
 		previous_city[destination_city][subset]=minimum_city_index;
 		results_matrix[destination_city][subset]=minimum_city_value;
+		timeCityMatrix[destination_city][subset]=minimum_city_time;
 		return minimum_city_value;
 	}
 }
@@ -68,6 +82,7 @@ function calculate_init()
 {
 	initResultsMatrix();
 	initPrevCityMatrix();
+	initTimeCityMatrix();
 	for(var init=0;init<number_of_elements-1;init++)
 	{
 		generate_subset(init);
@@ -113,7 +128,8 @@ function generate_subset(k) //k - number of elements in subset
 //find_path(0,Math.pow(2,number_of_elements)-2);
 function find_path(destination_city,subset, route)
 {
-	//console.log('from ' + previous_city[destination_city][subset] + ' to ' + destination_city);
+var dateString=new Date(timeCityMatrix[destination_city][subset]);
+	console.log('from ' + previous_city[destination_city][subset] + ' to ' + destination_city + ' at ' + dateString);
 	route.push(destination_city);
 	
 	if(subset>0)
@@ -129,4 +145,10 @@ function find_path(destination_city,subset, route)
 		drawRoute(route);
 	}
 
+}
+function ifOnTime(destination_city,timeCome)
+{
+	//if not on time return big value
+	//oops not yet implement
+	return 0;
 }
