@@ -5,6 +5,7 @@ var previous_city;
 var timeCityMatrix;
 var timeFrame;
 
+
 function initTimeFrame()
 {
 	timeFrame = new Array(number_of_elements+1);
@@ -97,9 +98,11 @@ function calculate_init()
 	{
 		generate_subset(init);
 	}
-	calculate_Way(0,Math.pow(2,number_of_elements)-2);
+	//calculate_Way(0,Math.pow(2,number_of_elements)-2);
 	
-	find_path(0,Math.pow(2,number_of_elements)-2, []);
+	//find_path(0,Math.pow(2,number_of_elements)-2, []);
+	var tempResult = calculateWayNew(0,0,new Array( number_of_elements + 1),0,0,beginTime,0);
+	drawPath(tempResult,[]);
 }
 //generowanie pokolei ktore zbiory ma liczyc odleglosci
 function generate_subset(k) //k - number of elements in subset
@@ -154,7 +157,6 @@ var dateString=new Date(timeCityMatrix[destination_city][subset]);
 		});
 		drawRoute(route);
 	}
-
 }
 function ifOnTime(destinationCity,timeCome)
 {
@@ -358,5 +360,48 @@ console.log(debugInfo);
 			console.log('tutaj jestem');
 			return {vectorOfVectorOfCities:resultsMatrix,vectorOfCosts:costMatrix,minOneOnTime:0};
 		}
+	}
+}
+
+function drawPath(calculateResults, route)
+{
+	if(calculateResults.minOneOnTime==1)
+	{
+		var i = 0;
+		var timeCurrent = beginTime;
+		while (true)
+		{
+			//if(typeof(calculateResults.vectorOfVectorOfCities[i])=="undefined")
+			if(i>=number_of_elements)
+			{
+				var dateStringfrom = new Date( timeCurrent );
+				timeCurrent=timeCurrent+distancematrix_1[0][i-1].duration*1000;
+				var dateStringto = new Date( timeCurrent );
+				console.log('from: '+calculateResults.vectorOfVectorOfCities[0][i-1]+' @ '+ dateStringfrom +' to 0 @ '+dateStringto);
+				route.push(0);
+				break;
+			}
+			if(i!=0)
+			{
+				var dateStringfrom = new Date( timeCurrent );
+				timeCurrent=timeCurrent+distancematrix_1[i][i-1].duration*1000;
+				var dateStringto = new Date( timeCurrent );
+				console.log('from: '+calculateResults.vectorOfVectorOfCities[0][i-1]+' @ '+ dateStringfrom +' to '+calculateResults.vectorOfVectorOfCities[0][i]+' @ '+dateStringto);
+				//drawRoute(route);
+			}
+			route.push(calculateResults.vectorOfVectorOfCities[0][i]);
+			i++;
+		}
+		
+		
+		route = route.map(function(id) {
+			return locations[id];
+		});
+		drawRoute(route);
+		
+	}
+	else
+	{
+		console.log('No possible results.');
 	}
 }
