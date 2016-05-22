@@ -3,6 +3,15 @@ var distancematrix_1;
 var results_matrix;
 var previous_city;
 var timeCityMatrix;
+var timeFrame;
+
+function initTimeFrame()
+{
+	timeFrame = new Array(number_of_elements+1);
+	//examples
+	timeFrame[1]={begin:1463901662807,end:1493901662805};//City 1 indexes from 0
+	timeFrame[2]={begin:1463901662807,end:1493901662805};
+}
 
 function initResultsMatrix() {
 	results_matrix = new Array(number_of_elements);
@@ -80,6 +89,7 @@ function calculate_Way(destination_city, subset)
 }
 function calculate_init()
 {
+	initTimeFrame();
 	initResultsMatrix();
 	initPrevCityMatrix();
 	initTimeCityMatrix();
@@ -146,9 +156,207 @@ var dateString=new Date(timeCityMatrix[destination_city][subset]);
 	}
 
 }
-function ifOnTime(destination_city,timeCome)
+function ifOnTime(destinationCity,timeCome)
 {
-	//if not on time return big value
-	//oops not yet implement
-	return 0;
+console.log(destinationCity+' '+timeCome);
+	if(timeFrame[destinationCity]!=null)
+	{
+		if(timeFrame[destinationCity].begin!=null)
+		{
+			if(timeFrame[destinationCity].begin>timeCome)
+			{
+				console.log('City '+destinationCity+' false');
+				return 0;
+			}
+		}
+		if(timeFrame[destinationCity].end!=null)
+		{
+			if(timeFrame[destinationCity].end<timeCome)
+			{
+				console.log('City '+destinationCity+' false');
+				return 0;
+			}
+		}
+		console.log('City '+destinationCity+' true');
+		return 1;
+	}
+	else
+	{
+		console.log('City '+destinationCity+' true');
+		return 1;
+	}
+}
+
+//var a = calculateWayNew(0,0,new Array( number_of_elements + 1),0,0,beginTime,0)
+function calculateWayNew(destinationCity, visitedCities, vectorVisitedCities, previousCity, step, timeCurrent,previousCost)
+{
+vectorVisitedCities[step]=destinationCity;
+//info begin
+//var debugInfo='debug: ';
+//for (var i = 0; i<= step; i++)
+//{
+//if(i!=0){debugInfo+=' -> ';}
+//debugInfo+=vectorVisitedCities[i];
+//}
+//debugInfo+=' step '+ step;
+//console.log(debugInfo);
+//info end
+	if(visitedCities==(Math.pow(2,number_of_elements)-2))
+	//if(step==number_of_elements-2)
+	{
+		var costMatrix;
+		var resultsMatrix;
+		//cost = distancematrix_1[0][destinationCity].distance+previousCost;
+		cost = distancematrix_1[destinationCity][0].distance+previousCost;
+		var onTime = ifOnTime(0,timeCurrent + distancematrix_1[0][destinationCity].duration );
+		if (onTime) 
+			{
+				costMatrix = cost;//new Array( 1 );
+				//costMatrix[ 0 ] = cost ;
+				resultsMatrix = new Array( 1 );
+				resultsMatrix[ 0 ] = vectorVisitedCities ;
+			}
+			
+		//info begin
+var debugInfo='debug: ';
+for (var i = 0; i<= step; i++)
+{
+if(i!=0){debugInfo+=' -> ';}
+debugInfo+=vectorVisitedCities[i];
+}
+debugInfo+=' step '+ step+' cost '+cost + ' prevcity '+previousCity+' destcity '+ destinationCity;
+console.log(debugInfo);
+//info end
+
+
+		
+		return {vectorOfVectorOfCities:resultsMatrix,vectorOfCosts:costMatrix,minOneOnTime:onTime};
+	}
+	else
+	{
+		var resultsMatrix ;
+		var costMatrix ;
+		if (( ifOnTime(destinationCity, timeCurrent + distancematrix_1[destinationCity][previousCity].duration ) ) || ( step == 0 ))
+		{
+			if( step == 0 )
+			{
+				//vectorVisitedCities[0]=	100;
+			}
+			var minOneOnTime = 0 ;
+			var notVisitedCities = Math.pow(2,number_of_elements) - 2 - visitedCities;
+			var possibleNextCity = new Array(number_of_elements+1);
+			var results = new Array(number_of_elements+1);
+			possibleNextCity[0]=0;
+			var minimumCostCityIndex=0;
+			var minimumCost = Number.MAX_VALUE;
+			for(var i=1;i<=number_of_elements;i++)
+			{
+				if( Math.floor( notVisitedCities/Math.pow(2,i)) % 2 == 1)
+				{
+					possibleNextCity[i]=1;
+					var vectorVisitedCitiesTemp = new  Array(number_of_elements+1);
+					for (var j = 0 ; j < number_of_elements ; j++)
+					{
+						vectorVisitedCitiesTemp[j]=vectorVisitedCities[j];
+					}
+					
+					//results[i] = calculateWayNew(i, visitedCities+Math.pow(2,i), vectorVisitedCitiesTemp, destinationCity, step+1, timeCurrent+distancematrix_1[i][destinationCity].duration*1000,previousCost+distancematrix_1[i][destinationCity].distance);
+					results[i] = calculateWayNew(i, visitedCities+Math.pow(2,i), vectorVisitedCitiesTemp, destinationCity, step+1, timeCurrent+distancematrix_1[i][destinationCity].duration*1000,previousCost+distancematrix_1[destinationCity][i].distance);
+					if(results[i]==null)
+					{
+						console.log('blad'+i+' '+destinationCity);
+						console.log('zle '+i, visitedCities+Math.pow(2,i), vectorVisitedCitiesTemp, destinationCity, step+1, timeCurrent+distancematrix_1[i][destinationCity].duration*1000,previousCost+distancematrix_1[destinationCity][i].distance);
+					}
+					else
+					{
+						console.log('dobre '+i, visitedCities+Math.pow(2,i), vectorVisitedCitiesTemp, destinationCity, step+1, timeCurrent+distancematrix_1[i][destinationCity].duration*1000,previousCost+distancematrix_1[destinationCity][i].distance);
+					}
+					if(results[i].minOneOnTime==1)
+					{
+						minOneOnTime = 1;
+						if(results[i].vectorOfCosts<minimumCost)
+						{
+							minimumCostCityIndex=i;
+							minimumCost=results[i].vectorOfCosts;
+						}
+					}
+				}
+				else
+				{
+					possibleNextCity[i]=0;
+				}
+			}
+			//resultsMatrix = vectorVisitedCities;
+			if(minimumCostCityIndex==0)
+			{
+				return {vectorOfVectorOfCities:resultsMatrix,vectorOfCosts:costMatrix,minOneOnTime:0};
+			}
+			else
+			{
+				return results[minimumCostCityIndex];
+			}
+			
+			/*
+			
+					var minimum_city_index=0;
+		var minimum_city_value=Number.MAX_VALUE;
+		var minimum_city_time=0;
+		for(var i=1;i<=number_of_elements;i++)
+		{
+			if(possible_subsets[i]==1)
+			{
+				//results_subsets[i]=distancematrix_1[destination_city][i]+calculate_Way(i, subset-Math.pow(2,i));
+				results_subsets[i]=distancematrix_1[destination_city][i].distance+results_matrix[i][subset-Math.pow(2,i)]
+				+ ifOnTime(destination_city,timeCityMatrix[i][subset-Math.pow(2,i)]+distancematrix_1[destination_city][0].duration*1000);
+				if(minimum_city_value>results_subsets[i])
+				{
+					minimum_city_value=results_subsets[i];
+					minimum_city_index=i;
+					minimum_city_time=timeCityMatrix[i][subset-Math.pow(2,i)]+distancematrix_1[destination_city][i].duration*1000;
+					//dodac droge
+				}
+			}
+		}
+		previous_city[destination_city][subset]=minimum_city_index;
+		results_matrix[destination_city][subset]=minimum_city_value;
+		timeCityMatrix[destination_city][subset]=minimum_city_time;
+			
+			
+			
+			*/
+			
+			
+			
+			
+			
+			
+			// ilosc mozliwosci
+			// 
+			// = new Array(number_of_elements);
+			
+			//
+					
+			//results matrix 
+		 //not including city where we begin
+			//var minOneOnTime = false ;
+			//var minCostIndex = 0;
+			//wybierz wszystkie mozliwosc 
+			//minimalizuj je jesli sa na czas
+			//results_matrix[0] = 5;
+						
+		
+				
+//			if( step == 0 )
+//			{
+//				
+//			}
+			//return {vectorOfVectorOfCities:resultsMatrix,vectorOfCosts:costMatrix,minOneOnTime:minOneOnTime};
+				// true minOnTime co jesli 1 miasto  i co jesli sie wysypie na pierwszym
+		}
+		else
+		{
+			console.log('tutaj jestem');
+			return {vectorOfVectorOfCities:resultsMatrix,vectorOfCosts:costMatrix,minOneOnTime:0};
+		}
+	}
 }
