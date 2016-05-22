@@ -15,7 +15,7 @@ function initMap() {
 		streetViewControl: false
 	});
 	
-	initAutocomplete();
+	initAutocomplete();	
 
 	loadPreset('europe5');
 }
@@ -25,7 +25,8 @@ function addAutocompleteLocation() {
 	locations.push({
 		id: generateId(),
 		name:place.formatted_address,
-		latLng: place.geometry.location
+		latLng: place.geometry.location,
+		timeFrame: {begin:0, end:0}
 	});
 	$('#pac-input').val('');
 	refreshView();

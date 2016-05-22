@@ -3,7 +3,14 @@ var markers = [];
 var directionsDisplay = [];
 
 function addLocation(loc) {
-	var elem = $('<div class="location" data-id='+loc.id+'><div class="name">'+loc.name+'</div><div class="close"></div></div>');
+	var elem = $('<div class="location" data-id='+loc.id+'>' +
+					'<div class="name">'+loc.name+'</div>' + 
+					'<div class="close"></div>' + 
+					'<div class="time-limits">' +
+						'<input type="text" value="" class="after" placeholder="from"/>' + 
+						'<input type="text" value="" class="before" placeholder="to"/>' + 
+					'</div>' + 
+				'</div>');
 	elem.find('.close').on('click', removeLocation);
 	$locations.append(elem);
 }
@@ -112,6 +119,7 @@ function refreshView() {
 	clearRoute();
 	refreshMarkers();
 	refreshLocations();
+	initDateTimePicker();
 }
 
 function loadPreset(key) {
@@ -121,4 +129,46 @@ function loadPreset(key) {
 		locations = [];
 	}
 	refreshView();
+}
+
+function initDateTimePicker() {
+	var $input = $('.time-limits .after, .time-limits .before');
+	$input.datetimepicker({
+		dayOfWeekStart : 1,
+		lang:'en',
+		step:10
+	});
+	$input.on('focus', function() {
+		$('body').addClass('show-datetime-picker');
+	});
+	$input.on('blur', function() {
+		$('body').removeClass('show-datetime-picker');
+	});	
+	$('.time-limits .after').on('change', function() {
+		var id = $(this).closest('.location').data('id');
+		if($(this).val() == '') {
+			getLocation(id).timeFrame.begin = 0;
+		} else {
+			getLocation(id).timeFrame.begin = $(this).datetimepicker('getValue').getTime();
+		}
+	});
+	$('.time-limits .before').on('change', function() {
+		var id = $(this).closest('.location').data('id');
+		if($(this).val() == '') {
+			getLocation(id).timeFrame.end = 0;
+		} else {
+			getLocation(id).timeFrame.end = $(this).datetimepicker('getValue').getTime();
+		}
+	});
+}
+
+function getLocation(id) {
+	var loc;
+	$.each(locations, function(i, l) {
+		if (l.id == id) {
+			loc = l;
+			return false;
+		}
+	});
+	return loc;
 }
