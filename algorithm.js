@@ -4,7 +4,8 @@ var distancematrix_1;
 
 function calculate_init()
 {
-	var tempResult = calculateWayNew(0,0,new Array( number_of_elements + 1),0,0,beginTime,0);
+	//var tempResult = calculateWayNew(0,0,new Array( number_of_elements + 1),0,0,beginTime,0);
+	var tempResult = calculateWayNew(0,0,new Array( 1 ),0,0,beginTime,0);
 	drawPath(tempResult,[]);
 }
 function ifOnTime(destinationCity,timeCome)
@@ -37,26 +38,24 @@ function calculateWayNew(destinationCity, visitedCities, vectorVisitedCities, pr
 		cost = distancematrix_1[destinationCity][0].distance+previousCost;
 		var onTime = ifOnTime(0,timeCurrent + distancematrix_1[0][destinationCity].duration );
 		if (onTime) 
-			{
-				costMatrix = cost;//new Array( 1 );
-				//costMatrix[ 0 ] = cost ;
-				resultsMatrix = new Array( 1 );
-				resultsMatrix[ 0 ] = vectorVisitedCities ;
-			}
+		{
+			costMatrix = cost;//new Array( 1 ) ;
+			//costMatrix[ 0 ] = cost ;
+			resultsMatrix = new Array( 1 ) ;
+			resultsMatrix[ 0 ] = vectorVisitedCities ;
+		}
 			
 		//info begin
-//var debugInfo='debug: ';
-//for (var i = 0; i<= step; i++)
-//{
-//if(i!=0){debugInfo+=' -> ';}
-//debugInfo+=vectorVisitedCities[i];
-//}
-//debugInfo+=' step '+ step+' cost '+cost + ' prevcity '+previousCity+' destcity '+ destinationCity;
-//console.log(debugInfo);
-//info end
-
-
-		return {vectorOfVectorOfCities:resultsMatrix,vectorOfCosts:costMatrix,minOneOnTime:onTime};
+		//var debugInfo='debug: ';
+		//for (var i = 0; i<= step; i++)
+		//{
+		//if(i!=0){debugInfo+=' -> ';}
+		//debugInfo+=vectorVisitedCities[i];
+		//}
+		//debugInfo+=' step '+ step+' cost '+cost + ' prevcity '+previousCity+' destcity '+ destinationCity;
+		//console.log(debugInfo);
+		//info end
+		return {vectorOfCities:resultsMatrix,vectorOfCosts:costMatrix,minOneOnTime:onTime};
 	}
 	else
 	{
@@ -76,8 +75,8 @@ function calculateWayNew(destinationCity, visitedCities, vectorVisitedCities, pr
 				if( Math.floor( notVisitedCities/Math.pow(2,i)) % 2 == 1)
 				{
 					possibleNextCity[i]=1;
-					var vectorVisitedCitiesTemp = new  Array(number_of_elements+1);
-					for (var j = 0 ; j < number_of_elements ; j++)
+					var vectorVisitedCitiesTemp = new  Array(vectorVisitedCities.length+1);
+					for (var j = 0 ; j < vectorVisitedCities.length ; j++)
 					{
 						vectorVisitedCitiesTemp[j]=vectorVisitedCities[j];
 					}
@@ -108,7 +107,7 @@ function calculateWayNew(destinationCity, visitedCities, vectorVisitedCities, pr
 			}
 			if(minimumCostCityIndex==0)
 			{
-				return {vectorOfVectorOfCities:resultsMatrix,vectorOfCosts:costMatrix,minOneOnTime:0};
+				return {vectorOfCities:resultsMatrix,vectorOfCosts:costMatrix,minOneOnTime:0};
 			}
 			else
 			{
@@ -117,7 +116,7 @@ function calculateWayNew(destinationCity, visitedCities, vectorVisitedCities, pr
 		}
 		else
 		{
-			return {vectorOfVectorOfCities:resultsMatrix,vectorOfCosts:costMatrix,minOneOnTime:0};
+			return {vectorOfCities:resultsMatrix,vectorOfCosts:costMatrix,minOneOnTime:0};
 		}
 	}
 }
@@ -133,27 +132,26 @@ function drawPath(calculateResults, route)
 			if(i>=number_of_elements)
 			{
 				var dateStringfrom = new Date( timeCurrent );
-				timeCurrent=timeCurrent+distancematrix_1[0][calculateResults.vectorOfVectorOfCities[0][i-1]].duration*1000;
+				timeCurrent=timeCurrent+distancematrix_1[0][calculateResults.vectorOfCities[0][i-1]].duration*1000;
 				var dateStringto = new Date( timeCurrent );
-				console.log('from: '+calculateResults.vectorOfVectorOfCities[0][i-1]+' '+locations[calculateResults.vectorOfVectorOfCities[0][i-1]].name+' @ '+ dateStringfrom +' to 0 '+locations[calculateResults.vectorOfVectorOfCities[0][0]].name+'@ '+dateStringto);
+				console.log('from: '+calculateResults.vectorOfCities[0][i-1]+' '+locations[calculateResults.vectorOfCities[0][i-1]].name+' @ '+ dateStringfrom +' to 0 '+locations[calculateResults.vectorOfCities[0][0]].name+'@ '+dateStringto);
 				route.push(0);
 				break;
 			}
 			if(i!=0)
 			{
 				var dateStringfrom = new Date( timeCurrent );
-				timeCurrent=timeCurrent+distancematrix_1[calculateResults.vectorOfVectorOfCities[0][i]][calculateResults.vectorOfVectorOfCities[0][i-1]].duration*1000;
+				timeCurrent=timeCurrent+distancematrix_1[calculateResults.vectorOfCities[0][i]][calculateResults.vectorOfCities[0][i-1]].duration*1000;
 				var dateStringto = new Date( timeCurrent );
-				console.log('from: '+calculateResults.vectorOfVectorOfCities[0][i-1]+' '+locations[calculateResults.vectorOfVectorOfCities[0][i-1]].name+' @ '+ dateStringfrom +' to '+calculateResults.vectorOfVectorOfCities[0][i]+' '+locations[calculateResults.vectorOfVectorOfCities[0][i]].name+' @ '+dateStringto);
+				console.log('from: '+calculateResults.vectorOfCities[0][i-1]+' '+locations[calculateResults.vectorOfCities[0][i-1]].name+' @ '+ dateStringfrom +' to '+calculateResults.vectorOfCities[0][i]+' '+locations[calculateResults.vectorOfCities[0][i]].name+' @ '+dateStringto);
 			}
-			route.push(calculateResults.vectorOfVectorOfCities[0][i]);
+			route.push(calculateResults.vectorOfCities[0][i]);
 			i++;
 		}
 		route = route.map(function(id) {
 			return locations[id];
 		});
 		drawRoute(route);
-		
 	}
 	else
 	{
