@@ -1,9 +1,5 @@
 var number_of_elements;
 var distancematrix_1;
-var results_matrix;
-var previous_city;
-var timeCityMatrix;
-var timeFrame;
 
 
 function calculate_init()
@@ -121,7 +117,6 @@ function calculateWayNew(destinationCity, visitedCities, vectorVisitedCities, pr
 		}
 		else
 		{
-			console.log('tutaj jestem');
 			return {vectorOfVectorOfCities:resultsMatrix,vectorOfCosts:costMatrix,minOneOnTime:0};
 		}
 	}
@@ -163,5 +158,6 @@ function drawPath(calculateResults, route)
 	else
 	{
 		console.log('No possible results.');
+		alert('No possible results.');
 	}
 }
