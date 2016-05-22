@@ -1,9 +1,8 @@
 # GMaps
 TSP with Google Maps
 
+Pierwsza miejscowosc na liście w GUI (locations[0]) jest traktowana miejsce główne (z którego startujemy)
+Ramy czasowe które wprowadzamy do tej miejscowości dotyczy czasu dojechania do "METY"
+
 Rzeczy, które jeszcze sa do zrobienia:
-1) GUI czasowe
-2) usuniencie kodu od starego algorytmu oraz sprawienie, że będzie bardziej czytelny
-
-
-*zminimalizowanie zużycia ramu
+*zminimalizowanie zużycia ramu jeśli potrzeba
