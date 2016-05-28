@@ -123,7 +123,7 @@ function addElementToCollection(givenCollection,givenElement)
 }
 function showXCollection ( givenCollection )
 {
-	if(givenCollection != undefined )
+	if(typeof givenCollection !== undefined )
 	{
 		for (var j = 0 ; j < givenCollection.length ; j++)
 		{
@@ -206,7 +206,7 @@ function showAllXCollections()
 function resultX ( givenCollection )
 {
 	var resultXX;
-	if(givenCollection != undefined )
+	if(typeof givenCollection !== undefined )
 	{
 		var minimumCostPathIndex=0;
 		var minimumCost = Number.MAX_VALUE;
