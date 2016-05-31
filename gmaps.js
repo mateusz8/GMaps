@@ -107,7 +107,7 @@ function loadDistanceMatrix(indexI,indexJ) {
 					for (var j = 0; j < results.length; j++) {
 						distancematrix_1[i+indexI*10][j+indexJ*10] = {
 							distance: results[j].distance.value,
-							duration: results[j].duration.value
+							duration: results[j].duration.value*1000
 						}
 					}
 				}
@@ -116,7 +116,8 @@ function loadDistanceMatrix(indexI,indexJ) {
 				if (requestsCounter == requestsToLoad) {
 					console.log('distance matrix loaded');
 					//calculateCost();
-					calculate_init();
+					//calculate_init();
+					newCalc();
 				}
 			}
 		});
@@ -148,5 +149,177 @@ $('#fake-input').on('change', function() {
 $('#calculate').on('click', function() {
 	process_all();
 });
+
+
+function newCalc() {
+	var states = minimalize(locations.length);
+	console.log(states);
+	
+	var best = states[0].decisionsState[0];
+	for (var i = 1; i < states[0].decisionsState.length; i++) {
+		if (states[0].decisionsState[i].cost < best.cost && fitsTime(states[0].decisionsState[i])) {
+			best = states[0].decisionsState[i];
+		}
+	}
+	
+	if (fitsTime(best, true)) {
+		console.log(best);
+		drawRoute(best.state);
+	} else {
+		console.log("Brak drogi");
+	}
+}
+
+function fitsTime(route, log) {
+	//console.log(route.state);
+	var now = new Date().getTime();
+	var time = 0;
+	var r = route.state[0].id + ' -> ';
+	for (var i = 0; i < route.state.length - 1; i++) {
+		
+
+		
+		time = time + distancematrix_1[locations.indexOf(route.state[i])][locations.indexOf(route.state[i+1])].duration;
+		if (route.state[i].timeFrame.begin && route.state[i].timeFrame.begin > now + time) {
+			console.log("Wrong route!");
+			return false
+		}
+		if (route.state[i].timeFrame.end && route.state[i].timeFrame.end < now + time) {
+			console.log("Wrong route!");
+			return false
+		}
+		//console.log(new Date(route.state[i].timeFrame.begin));
+		var date = new Date(now + time);
+		if (log) {
+			console.log("In " + route.state[i+1].name + "[" + route.state[i+1].id + "] at " + date.getHours() + ":" + date.getMinutes());
+		}
+		//console.log(new Date(route.state[i].timeFrame.end));		
+		r += route.state[i+1].id + ' -> ';
+
+	}
+	if (log) {
+		console.log(r);
+	}
+	
+	return true;
+}
+
+function permute(cities) {
+	var permutations = [];
+	function generate(n, arr) {
+		if (n == 1) {
+			var perm = arr.slice();
+			perm.unshift(cities[0]);
+			perm.push(cities[0]);
+			
+			permutations.push(perm);
+			
+			return;
+		}
+		for (var i = 0; i < n; i+= 1) {
+			generate(n - 1, arr);
+			if (n % 2 == 0) {
+				swap(arr, i, n - 1);
+			} else {
+				swap(arr, 0, n - 1);
+			}
+		}
+	}
+	function swap(arr, idxA, idxB) {
+		var tmp = arr[idxA];
+		arr[idxA] = arr[idxB];
+		arr[idxB] = tmp;
+	}
+	generate(cities.length-1, cities.slice(1));
+	return permutations;
+}
+
+
+function minimalize(step) {
+	if (step > 1) {
+		var states = minimalize(step-1);
+	}
+	else {
+		var states = permute(locations);
+		states = states.map(function(state) {
+			return {
+				state: state,
+				stringState: pathToString(state),
+				decisions: [],
+				decisionsState: [{state: state, cost: 0, time: 0}]
+			};
+		})
+	}
+	console.log('step ' + step + ':');
+	console.log(states);
+	
+	var currStates = [];
+	var currStringStates = [];
+	var currDecisions = [];
+	var currDecisionsState = [];
+	
+	for (var i = 0; i < states.length; i+= 1) {
+		var index = (states[i].state.length - 1)
+		var state = states[i].state.slice();
+		state.splice(index);
+		var stringState = pathToString(state);
+		
+		var decisionStates = states[i].decisionsState.slice();
+		decisionStates.map(function(s){
+			s.cost = s.cost + distancematrix_1[locations.indexOf(states[i].state[index-1])][locations.indexOf(states[i].state[index])].distance;
+			return s;
+		});
+		
+		var pos = currStringStates.indexOf(stringState);
+		if(pos > -1) {
+			if (currDecisions[pos].indexOf(states[i].state[index].id) == -1) {
+				currDecisions[pos].push(states[i].state[index].id);
+				currDecisionsState[pos] = currDecisionsState[pos].concat(decisionStates);	
+			}
+		} else {
+			currStates.push(state);
+			currStringStates.push(stringState);
+			currDecisions.push([states[i].state[index].id]);
+			currDecisionsState.push(decisionStates);
+		}
+	}
+	
+	var prevStates = [];
+	for (var i = 0; i < currStates.length; i+= 1) {
+		console.log(currStringStates[i] + ' | ' + currDecisions[i]);
+		
+		var decisions = [];
+		for (var j = 0; j < currDecisions[i].length; j+= 1) {
+			decisions.push(currDecisions[i][j]);
+		}
+		
+		prevStates.push({
+			state: currStates[i],
+			stringState: currStringStates[i],
+			decisions: currDecisions[i],
+			decisionsState: currDecisionsState[i],
+		});
+	}
+	
+	console.log('');
+	
+	return prevStates;
+}
+
+function pathToString(path) {
+	var result = '';
+	for (var i = 0; i < path.length; i+= 1) {
+		result += path[i].id;
+		if (i<path.length-1) {
+			result += ' -> ';
+		}
+	}
+	return result;
+}
+
+
+
+
+
 
 initMap();

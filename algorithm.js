@@ -23,10 +23,18 @@ initialXCollection [0] = initialX;
 function calculate_init()
 {
 	XCollectionTable = new Array ( number_of_elements + 1) ;
+XCollectionTable1 = new Array ( number_of_elements + 1) ;
 	calculateWay(initialXCollection,0);
+	
 	drawPath([]);
 	XCollectionTable[0] = initialXCollection;
-	showAllXCollections();
+	XCollectionTable1[0] = initialXCollection;
+	
+	calculateWay1(initialXCollection,0);
+showAllXCollections1();
+console.log(" ");
+console.log(" ");
+//showAllXCollections();
 }
 function ifOnTime(destinationCity,timeCome)
 {
@@ -203,6 +211,14 @@ function showAllXCollections()
 	showXCollection(XCollectionTable[i]);
 	}
 }
+function showAllXCollections()
+{
+	for ( var i = 0 ; i <= number_of_elements ; i++ )
+	{
+	console.log(' ');
+	showXCollection(XCollectionTable[i]);
+	}
+}
 function resultX ( givenCollection )
 {
 	var resultXX;
@@ -248,5 +264,179 @@ function drawPath(route)
 	{
 		console.log('It is not possible.');
 		alert('It is not possible.');
+	}
+}
+
+function ifOnTime(destinationCity,timeCome)
+{
+	//console.log(destinationCity+' '+timeCome);
+	if((locations[destinationCity].timeFrame.begin !=0 )&&(locations[destinationCity].timeFrame.begin>timeCome))
+	{
+		//console.log('City '+destinationCity+' false');
+		return 0;
+	}
+	if((locations[destinationCity].timeFrame.end!=0)&&(locations[destinationCity].timeFrame.end<timeCome))
+	{
+		//console.log('City '+destinationCity+' false');
+		return 0;
+	}
+	//console.log('City '+destinationCity+' true');
+	return 1;
+}
+function calculateWay1(xCollection,step)
+{
+	var xppCollection = [];
+	if( step < number_of_elements -1)
+	{
+		for( var i = 0 ; i < xCollection.length ; i++ )
+		{
+			xppCollection = possibilitiesForSingleX1(xppCollection,xCollection[i]);
+		}
+		calculateWay1(xppCollection,step+1);
+	}
+	else
+	{
+		for( var i = 0 ; i < xCollection.length ; i++ )
+			{
+				xppCollection = addLastPath( xppCollection,xCollection[i] );
+			}
+	}
+	XCollectionTable1[step+1] = xppCollection;
+}
+function possibilitiesForSingleX1(generatedXppCollection,X)
+{
+	var notVisitedCities = Math.pow(2,number_of_elements) - 2 - X.visitedCities;
+	var possibleNextCity = new Array(number_of_elements+1);
+	var results = new Array(number_of_elements+1);
+	possibleNextCity[0]=0;
+	var minimumCostCityIndex=0;
+	var minimumCost = Number.MAX_VALUE;
+	for(var i=1 ; i <= number_of_elements ; i++ )
+	{
+		if( Math.floor( notVisitedCities/Math.pow(2,i)) % 2 == 1)
+		{
+			if ( ifOnTime1(i, X.vectorOfTime[X.vectorOfTime.length-1] + distancematrix_1[i][X.vectorOfCities[X.vectorOfCities.length-1]].duration*1000 ) )
+			{
+				var newVectorOfCities = new Array ( X.vectorOfCities.length + 1 );
+				for (var j = 0 ; j < X.vectorOfCities.length ; j++)
+				{
+					newVectorOfCities[j]=X.vectorOfCities[j];
+				}
+				newVectorOfCities[newVectorOfCities.length-1] = i ;
+				var newVectorOfTime = new Array ( X.vectorOfTime.length + 1 );
+				for (var j = 0 ; j < X.vectorOfTime.length ; j++)
+				{
+					newVectorOfTime[j] = X.vectorOfTime[j];
+				}
+				newVectorOfTime[newVectorOfTime.length-1] = X.vectorOfTime[X.vectorOfTime.length-1] + distancematrix_1[i][X.vectorOfCities[X.vectorOfCities.length-1]].duration*1000 ;
+				var newCost = X.cost + distancematrix_1[i][X.vectorOfCities[X.vectorOfCities.length-1]].distance ;
+				var newVisitedCities = X.visitedCities + Math.pow(2,i) ;
+				var newX = 
+				{
+					vectorOfCities: newVectorOfCities ,
+					visitedCities: newVisitedCities ,
+					vectorOfTime: newVectorOfTime ,
+					cost: newCost,
+					ifOnTime: true
+				};
+				generatedXppCollection = addElementToCollection (generatedXppCollection , newX);
+			}
+			else
+			{
+				//console.log('Not on time');
+			}
+		}
+	}
+	return generatedXppCollection;
+}
+function showAllXCollections1()
+{
+	for ( var i = 1 ; i <= number_of_elements ; i++ )
+	{
+	console.log(' ');
+	showXCollection1(XCollectionTable1[i]);
+	}
+}
+function ifOnTime1(destinationCity,timeCome)
+{
+	return 1;
+}
+function addLastPath1(generatedXppCollection,X)
+{
+	if ( ifOnTime1(0, X.vectorOfTime[X.vectorOfTime.length-1] + distancematrix_1[0][X.vectorOfCities[X.vectorOfCities.length-1]].duration*1000 ) )
+	{
+		var newVectorOfCities = new Array ( X.vectorOfCities.length + 1 );
+		for (var j = 0 ; j < X.vectorOfCities.length ; j++)
+		{
+			newVectorOfCities[j]=X.vectorOfCities[j];
+		}
+		newVectorOfCities[newVectorOfCities.length-1] = 0 ;
+		var newVectorOfTime = new Array ( X.vectorOfTime.length + 1 );
+		for (var j = 0 ; j < X.vectorOfTime.length ; j++)
+		{
+			newVectorOfTime[j] = X.vectorOfTime[j];
+		}
+		newVectorOfTime[newVectorOfTime.length-1] = X.vectorOfTime[X.vectorOfTime.length-1] + distancematrix_1[0][X.vectorOfCities[X.vectorOfCities.length-1]].duration*1000 ;
+		var newCost = X.cost + distancematrix_1[0][X.vectorOfCities[X.vectorOfCities.length-1]].distance ;
+		var newVisitedCities = X.visitedCities ;
+		var newX = 
+		{
+			vectorOfCities: newVectorOfCities ,
+			visitedCities: newVisitedCities ,
+			vectorOfTime: newVectorOfTime ,
+			cost: newCost,
+			ifOnTime: true
+		};
+				generatedXppCollection = addElementToCollection (generatedXppCollection , newX);
+			}
+			else
+			{
+//				console.log('Not on time');
+			}
+	return generatedXppCollection;
+}
+function showX1 (givenX)
+{
+	var debugInfo = 'visited cities: 0  ';//='Way: ';
+	//for (var i = 0; i <= givenX.vectorOfCities.length - 1; i++)
+	//{
+	//	if(i!=0){debugInfo+=' -> ';}
+	//	debugInfo+=givenX.vectorOfCities[i];
+	//}
+	//var dateString = new Date( givenX.vectorOfTime[givenX.vectorOfTime.length-1] );
+	//debugInfo+=' time: '+ dateString +' cost: '+givenX.cost;
+	//debugInfo+=' to visit: ';
+	//var notVisitedCities = Math.pow(2,number_of_elements) - 2 - givenX.visitedCities;
+	for(var i=1 ; i <= number_of_elements ; i++ )
+	{
+		if( Math.floor( givenX.VisitedCities/Math.pow(2,i)) % 2 == 1)
+		{
+			debugInfo += i+' ';
+		}
+	}
+	console.log(debugInfo);
+}
+function showXCollection1 ( givenCollection )
+{
+	if(typeof givenCollection !== undefined )
+	{
+		for (var j = 0 ; j < givenCollection.length ; j++)
+		{
+			showX1(givenCollection[j]);
+		}
+	}
+	else
+	{
+		console.log('Empty.');
+	}
+}
+
+
+function steps(cities) {
+	console.log(cities.length);
+	console.log(cities);
+	for (var i = 0 ; i < cities.length ; i++) {
+		cites.length().slice();
+		showX1(givenCollection[j]);
 	}
 }
