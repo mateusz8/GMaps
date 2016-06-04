@@ -73,15 +73,28 @@ function addElementToCollection(givenCollection,givenElement)
 					check = false;
 					break;
 				}
-				
 			}
 			if (check == true)
 			{
 				existsInCollection = true;
-				if( givenElement.cost < givenCollection[i].cost)
+				var tempHandler;
+				if( givenElement.cost <= givenCollection[i].cost)
 				{
+					tempHandler = givenCollection[i];
 					givenCollection[i] = givenElement;
 				}
+				else
+				{
+					tempHandler=givenElement;
+				}
+				
+				var newRejected = new Array ( givenCollection[i].rejected.length + 1 );
+					for (var k = 0 ; k < newRejected.length -1 ; k++)
+					{
+						newRejected[k]=givenCollection[i].rejected[k];
+					}
+					newRejected[ newRejected.length -1 ] = tempHandler;
+				givenCollection[i].rejected = newRejected;
 			}
 		}
 	}
@@ -136,6 +149,10 @@ function showX (givenX)
 	//	}
 	//}
 	debugInfo += ' decision: '+givenX.decision;
+	for( var i = 0 ; i < givenX.rejected.length ; i++ )
+	{
+		debugInfo+=' rejected city: '+ givenX.rejected[i].decision +' cost: '+givenX.rejected[i].cost+ ' ';
+	}
 	console.log(debugInfo);
 }
 
@@ -251,13 +268,15 @@ function possibilitiesForSingleXInit(generatedXppCollection,X)
 				newVectorOfTime[newVectorOfTime.length-1] = X.vectorOfTime[X.vectorOfTime.length-1] + distancematrix_1[i][X.vectorOfCities[X.vectorOfCities.length-1]].duration*1000 ;
 				var newCost = 0;//X.cost + distancematrix_1[i][X.vectorOfCities[X.vectorOfCities.length-1]].distance ;
 				var newVisitedCities = X.visitedCities + Math.pow(2,i) ;
+				var rejected=[];
 				var newX = 
 				{
 					vectorOfCities: newVectorOfCities ,
 					visitedCities: newVisitedCities ,
 					vectorOfTime: newVectorOfTime ,
 					cost: newCost,
-					ifOnTime: true
+					ifOnTime: true,
+					rejected: rejected
 				};
 				generatedXppCollection = addElementToCollection (generatedXppCollection , newX);
 			}
@@ -297,6 +316,7 @@ function possibilitiesForSingleXNew(generatedXppCollection,X)
 				}
 				var newCost = X.cost + distancematrix_1[X.vectorOfCities[X.vectorOfCities.length-2]][X.vectorOfCities[X.vectorOfCities.length-1]].distance ;
 				var newVisitedCities = X.visitedCities;// + Math.pow(2,i) ;
+				var rejected=[];
 				var newX = 
 				{
 					vectorOfCities: newVectorOfCities ,
@@ -304,7 +324,8 @@ function possibilitiesForSingleXNew(generatedXppCollection,X)
 					vectorOfTime: newVectorOfTime ,
 					cost: newCost,
 					decision:X.vectorOfCities[X.vectorOfTime.length-1],
-					ifOnTime: true
+					ifOnTime: true,
+					rejected:rejected
 				};
 				generatedXppCollection = addElementToCollection (generatedXppCollection , newX);
 			}
