@@ -78,10 +78,13 @@ function addElementToCollection(givenCollection,givenElement)
 			{
 				existsInCollection = true;
 				var tempHandler;
+				var nullHandler;
 				if( givenElement.cost <= givenCollection[i].cost)
 				{
 					tempHandler = givenCollection[i];
 					givenCollection[i] = givenElement;
+					givenCollection[i].rejected = tempHandler.rejected;
+					tempHandler.rejected = nullHandler;
 				}
 				else
 				{
