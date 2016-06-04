@@ -32,12 +32,11 @@ catch(err) {
 	XCollectionTable = new Array ( number_of_elements + 1) ;
 	XCollectionTable2 = new Array ( number_of_elements + 1) ;
 	generateInitialCollection(initialXCollection,0);
-	console.log('Init done.');
 	XCollectionTable[0] = initialXCollection;
 	calculateXCollectionsNew(XCollectionTable2[number_of_elements],number_of_elements);
 	uOptimal = CalculateWayNewNew([0],0);
 	drawPathNew([]);
-	showAllXCollections();
+	//showAllXCollections();
 }
 function ifOnTime(destinationCity,timeCome)
 {
@@ -188,6 +187,7 @@ function calculateXCollectionsNew(xCollection,step)
 			xppCollection = possibilitiesForSingleXNew(xppCollection,xCollection[i]);
 		}
 		XCollectionTable2[step-1] = xppCollection;
+		showXCollection (XCollectionTable2[step-1]);
 		calculateXCollectionsNew(xppCollection,step-1);
 	}
 	
@@ -435,6 +435,7 @@ function CalculateWayNewNew(uVector,step)
 			uVectorNew[j]=uVector[j];
 		}
 		uVectorNew[uVectorNew.length-1] = psi2(uVector,step);
+		ShowUVector(uVectorNew);
 		return CalculateWayNewNew(uVectorNew,step+1);
 	}
 	else
@@ -478,5 +479,21 @@ function drawPathNew(route)
 	{
 		console.log('It is not possible.');
 		alert('It is not possible.');
+	}
+}
+function ShowUVector(uVector)
+{
+	if(!isNaN(uVector[0]))
+	{
+		var toPrint = 'u = ';
+		for (var j = 1 ; j < uVector.length ; j++)
+			{
+				if(j!=1)
+				{
+					toPrint+= ' -> ';
+				}
+				toPrint+= uVector[j];
+			}
+		console.log(toPrint);
 	}
 }
