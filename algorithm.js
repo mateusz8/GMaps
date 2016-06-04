@@ -134,7 +134,7 @@ function showXCollection ( givenCollection )
 }
 function showX (givenX)
 {
-	var debugInfo='Way: ';
+	var debugInfo='State: ';
 	for (var i = 0; i <= givenX.vectorOfCities.length - 1; i++)
 	{
 		if(i!=0){debugInfo+=' -> ';}
@@ -153,10 +153,19 @@ function showX (givenX)
 	//	}
 	//}
 	debugInfo += ' decision: '+givenX.decision;
-	for( var i = 0 ; i < givenX.rejected.length ; i++ )
+	if(givenX.rejected.length>0)
 	{
-		debugInfo+=' rejected city: '+ givenX.rejected[i].decision +' cost: '+givenX.rejected[i].cost+ ' ';
+			debugInfo+=' rejected cities: '
+		for( var i = 0 ; i < givenX.rejected.length ; i++ )
+		{
+			if(i!=0)
+			{
+				debugInfo+=', ';
+			}
+			debugInfo+=givenX.rejected[i].decision;// +' cost: '+givenX.rejected[i].cost+ ' ';
+		}	
 	}
+
 	console.log(debugInfo);
 }
 
@@ -200,6 +209,11 @@ function resultX ( givenCollection )
 
 function calculateXCollectionsNew(xCollection,step)
 {
+	if(step >0 )
+	{
+		var debugInfo = 'V'+(number_of_elements-step+1)+'(x'+(step-1)+')';
+	}
+	console.log(debugInfo);
 	var xppCollection = [];
 	if( step >= 1)
 	{
@@ -335,7 +349,15 @@ function possibilitiesForSingleXNew(generatedXppCollection,X)
 			}
 			else
 			{
-				//console.log('Not on time');
+				/*var debugInfo='Not on time: State: ';
+				for (var i = 0; i <= X.vectorOfCities.length - 1; i++)
+				{
+					if(i!=0){debugInfo+=' -> ';}
+					debugInfo+=X.vectorOfCities[i];
+				}
+				debugInfo+=' decision: '+X.decision;
+				console.log(debugInfo);*/
+				;
 			}
 
 	return generatedXppCollection;
