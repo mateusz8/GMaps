@@ -150,59 +150,143 @@ $('#calculate').on('click', function() {
 	process_all();
 });
 
+//
+// //
+// // // NEW ALGORITHM
+// //
+//
 
 function newCalc() {
 	var states = minimalize(locations.length);
+
 	console.log(states);
 	
-	var best = states[0].decisionsState[0];
-	for (var i = 1; i < states[0].decisionsState.length; i++) {
-		if (states[0].decisionsState[i].cost < best.cost && fitsTime(states[0].decisionsState[i])) {
-			best = states[0].decisionsState[i];
-		}
-	}
-	
-	if (fitsTime(best, true)) {
-		console.log(best);
-		drawRoute(best.state);
+	if (states.length) {
+		console.log('Choose path: ');
+		var path = states[0];
+		while (path.nextState != null) {
+			console.log('state: ' + path.stringState + ', desision: ' + path.decision);
+			path = path.nextState;
+		};
+		
+		console.log('path: ' + path.stringState + ', cost: ' + states[0].decisionState.cost);
+		drawRoute(path.state);
 	} else {
-		console.log("Brak drogi");
+		console.log('Nie znaleziono drogi spełniającej oczekiwania.');
+		alert('Nie znaleziono drogi spełniającej oczekiwania.');
 	}
 }
 
-function fitsTime(route, log) {
-	//console.log(route.state);
+function minimalize(step) {
+	if (step > 1) {
+		var states = minimalize(step-1);
+	}
+	else {
+		var states = permute(locations);
+		states = states.map(function(state) {
+			return {
+				nextState: null,
+				state: state,
+				stringState: pathToString(state),
+				decision: null,
+				decisionState: {state: state, cost: 0, time: 0}
+			};
+		})
+	}
+	console.log('step ' + step + ':');
+	//console.log(states);
+	
+	var currStates = [];
+	var currStringStates = [];
+	var currDecisions = [];
+	var currDecisionsState = [];
+	
+	for (var i = 0; i < states.length; i+= 1) {
+		var index = (states[i].state.length - 1)
+		var state = states[i].state.slice();
+		state.splice(index);
+		var stringState = pathToString(state);
+		
+		var cost = states[i].decisionState.cost + distancematrix_1[locations.indexOf(states[i].state[index-1])][locations.indexOf(states[i].state[index])].distance;
+		var pos = currStringStates.indexOf(stringState);
+		if(pos > -1) {
+			if (currDecisions[pos].indexOf(states[i].state[index].id) == -1) {
+				currDecisions[pos].push(states[i].state[index].id);
+				currDecisionsState[pos].push({state: state, cost: cost, time: 0});	
+			}
+		} else {
+			currStates.push(state);
+			currStringStates.push(stringState);
+			currDecisions.push([states[i].state[index].id]);
+			currDecisionsState.push([{state: state, cost: cost, time: 0}]);
+		}
+	}
+	
+	var prevStates = [];
+	for (var i = 0; i < currStates.length; i+= 1) {
+		var bestDecisionIndex = null;
+		for (var j = 0; j < currDecisions[i].length; j+= 1) {
+			if (bestDecisionIndex == null) {
+				if (isOnTime(currStates[i],currDecisions[i][j])) {
+					bestDecisionIndex = j;
+				}
+			} else {
+				if (currDecisionsState[i][bestDecisionIndex].cost > currDecisionsState[i][j].cost && isOnTime(currStates[i],currDecisions[i][j])) {
+					bestDecisionIndex = j;
+				}
+			}
+
+		}
+		if (bestDecisionIndex != null) {
+		
+			console.log('state: ' + currStringStates[i] + ', decisions: ' + currDecisions[i] + ', costs: ' + currDecisionsState[i].map(function(e){return e.cost}) + ', best: ' + currDecisions[i][bestDecisionIndex] + '(' + currDecisionsState[i][bestDecisionIndex].cost + ')');
+			
+			prevStates.push({
+				nextState: states.filter(function(e){return e.stringState == currStates[i].map(function(e){return e.id}).join(' -> ') + ' -> ' + currDecisions[i][bestDecisionIndex]})[0],
+				state: currStates[i],
+				stringState: currStringStates[i],
+				decision: currDecisions[i][bestDecisionIndex],
+				decisionState: currDecisionsState[i][bestDecisionIndex],
+			});
+		}
+		else {
+			console.log('state: ' + currStringStates[i] + ', decisions: ' + currDecisions[i] + ', costs: ' + currDecisionsState[i].map(function(e){return e.cost}) + ', best: none');		
+		}
+	}
+	
+	console.log('');
+	
+	return prevStates;
+}
+
+function isOnTime(state, decision) {
 	var now = new Date().getTime();
 	var time = 0;
-	var r = route.state[0].id + ' -> ';
-	for (var i = 0; i < route.state.length - 1; i++) {
-		
-
-		
-		time = time + distancematrix_1[locations.indexOf(route.state[i])][locations.indexOf(route.state[i+1])].duration;
-		if (route.state[i].timeFrame.begin && route.state[i].timeFrame.begin > now + time) {
-			console.log("Wrong route!");
-			return false
-		}
-		if (route.state[i].timeFrame.end && route.state[i].timeFrame.end < now + time) {
-			console.log("Wrong route!");
-			return false
-		}
-		//console.log(new Date(route.state[i].timeFrame.begin));
-		var date = new Date(now + time);
-		if (log) {
-			console.log("In " + route.state[i+1].name + "[" + route.state[i+1].id + "] at " + date.getHours() + ":" + date.getMinutes());
-		}
-		//console.log(new Date(route.state[i].timeFrame.end));		
-		r += route.state[i+1].id + ' -> ';
-
+	for (var i = 0; i < state.length - 1; i++) {
+		time = time + distancematrix_1[locations.indexOf(state[i])][locations.indexOf(state[i+1])].duration;
 	}
-	if (log) {
-		console.log(r);
-	}
+	time = time + distancematrix_1[locations.indexOf(state[state.length - 1])][locations.indexOf(getLocation(decision))].duration;
 	
+	if ((getLocation(decision).timeFrame.begin && getLocation(decision).timeFrame.begin > now + time)||(getLocation(decision).timeFrame.end && getLocation(decision).timeFrame.end < now + time)) {
+		console.log("Decision " + decision + " is out of time frame!");
+
+		return false
+	}
+
 	return true;
 }
+
+function pathToString(path) {
+	var result = '';
+	for (var i = 0; i < path.length; i+= 1) {
+		result += path[i].id;
+		if (i<path.length-1) {
+			result += ' -> ';
+		}
+	}
+	return result;
+}
+
 
 function permute(cities) {
 	var permutations = [];
@@ -233,92 +317,6 @@ function permute(cities) {
 	generate(cities.length-1, cities.slice(1));
 	return permutations;
 }
-
-
-function minimalize(step) {
-	if (step > 1) {
-		var states = minimalize(step-1);
-	}
-	else {
-		var states = permute(locations);
-		states = states.map(function(state) {
-			return {
-				state: state,
-				stringState: pathToString(state),
-				decisions: [],
-				decisionsState: [{state: state, cost: 0, time: 0}]
-			};
-		})
-	}
-	console.log('step ' + step + ':');
-	console.log(states);
-	
-	var currStates = [];
-	var currStringStates = [];
-	var currDecisions = [];
-	var currDecisionsState = [];
-	
-	for (var i = 0; i < states.length; i+= 1) {
-		var index = (states[i].state.length - 1)
-		var state = states[i].state.slice();
-		state.splice(index);
-		var stringState = pathToString(state);
-		
-		var decisionStates = states[i].decisionsState.slice();
-		decisionStates.map(function(s){
-			s.cost = s.cost + distancematrix_1[locations.indexOf(states[i].state[index-1])][locations.indexOf(states[i].state[index])].distance;
-			return s;
-		});
-		
-		var pos = currStringStates.indexOf(stringState);
-		if(pos > -1) {
-			if (currDecisions[pos].indexOf(states[i].state[index].id) == -1) {
-				currDecisions[pos].push(states[i].state[index].id);
-				currDecisionsState[pos] = currDecisionsState[pos].concat(decisionStates);	
-			}
-		} else {
-			currStates.push(state);
-			currStringStates.push(stringState);
-			currDecisions.push([states[i].state[index].id]);
-			currDecisionsState.push(decisionStates);
-		}
-	}
-	
-	var prevStates = [];
-	for (var i = 0; i < currStates.length; i+= 1) {
-		console.log(currStringStates[i] + ' | ' + currDecisions[i]);
-		
-		var decisions = [];
-		for (var j = 0; j < currDecisions[i].length; j+= 1) {
-			decisions.push(currDecisions[i][j]);
-		}
-		
-		prevStates.push({
-			state: currStates[i],
-			stringState: currStringStates[i],
-			decisions: currDecisions[i],
-			decisionsState: currDecisionsState[i],
-		});
-	}
-	
-	console.log('');
-	
-	return prevStates;
-}
-
-function pathToString(path) {
-	var result = '';
-	for (var i = 0; i < path.length; i+= 1) {
-		result += path[i].id;
-		if (i<path.length-1) {
-			result += ' -> ';
-		}
-	}
-	return result;
-}
-
-
-
 
 
 
