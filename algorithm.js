@@ -141,7 +141,8 @@ function showX (givenX)
 		debugInfo+=givenX.vectorOfCities[i];
 	}
 	var dateString = new Date( givenX.vectorOfTime[givenX.vectorOfTime.length-1] );
-	debugInfo+=' time: '+ dateString +' cost: '+givenX.cost;
+	//debugInfo+=' time: '+ dateString +' cost: '+givenX.cost;
+	debugInfo+=' cost: '+givenX.cost;
 	//debugInfo+=' to visit: ';
 	//var notVisitedCities = Math.pow(2,number_of_elements) - 2 - givenX.visitedCities;
 	//for(var i=1 ; i <= number_of_elements ; i++ )
