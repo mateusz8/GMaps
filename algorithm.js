@@ -35,6 +35,7 @@ function calculate_init()
 }
 function ifOnTime(destinationCity,timeCome)
 {
+	
 	if((locations[destinationCity].timeFrame.begin !=0 )&&(locations[destinationCity].timeFrame.begin>timeCome))
 	{
 		return false;
@@ -48,6 +49,7 @@ function ifOnTime(destinationCity,timeCome)
 
 function addElementToCollection(givenCollection,givenElement)
 {
+	
 	var existsInCollection = false;
 	if(typeof givenCollection !== undefined )
 	{
@@ -67,6 +69,7 @@ function addElementToCollection(givenCollection,givenElement)
 				existsInCollection = true;
 				var tempHandler;
 				var nullHandler;
+
 				if( givenElement.ifOnTime && givenElement.cost < givenCollection[i].cost)
 				{
 					tempHandler = givenCollection[i];
@@ -135,6 +138,10 @@ function showX (givenX)
 	decisions.push(givenX.decision);
 	costs.push(givenX.cost);
 	
+	if(!givenX.ifOnTime) {
+		console.log('Decision '+givenX.decision+' is out of time frame!');
+	}
+	
 	if(givenX.rejected.length>0)
 	{
 		for( var i = 0 ; i < givenX.rejected.length ; i++ )
@@ -148,7 +155,7 @@ function showX (givenX)
 		}	
 	}
 
-	debugInfo+=', decisions: ' + decisions + ', costs: ' + costs + ', best: ' + givenX.decision+'(' + givenX.cost + ')'
+	debugInfo+=', decisions: ' + decisions + ', costs: ' + costs + ', best: ' + (givenX.ifOnTime ? givenX.decision+'(' + givenX.cost + ')' : 'none');
 	
 	console.log(debugInfo);
 }
@@ -197,7 +204,9 @@ function calculateXCollections(xCollection,step)
 	{
 		for( var i = 0 ; i < xCollection.length ; i++ )
 		{
-			xppCollection = possibilitiesForSingleXNew(xppCollection,xCollection[i]);
+			if (xCollection[i].ifOnTime) {
+				xppCollection = possibilitiesForSingleXNew(xppCollection,xCollection[i]);
+			}
 		}
 		XCollectionTable[step-1] = xppCollection;
 		showXCollection (XCollectionTable[step-1]);
@@ -228,6 +237,7 @@ function generateInitialCollection(xCollection,step)
 }
 function possibilitiesForSingleXInit(generatedXppCollection,X)
 {
+	
 	var notVisitedCities = Math.pow(2,number_of_elements) - 2 - X.visitedCities;
 	var possibleNextCity = new Array(number_of_elements+1);
 	var results = new Array(number_of_elements+1);
@@ -268,6 +278,7 @@ function possibilitiesForSingleXInit(generatedXppCollection,X)
 
 function possibilitiesForSingleXNew(generatedXppCollection,X)
 {
+	
 	var notVisitedCities = Math.pow(2,number_of_elements) - 2 - X.visitedCities;
 	var possibleNextCity = new Array(number_of_elements-1);
 	var results = new Array(number_of_elements+1);
@@ -287,6 +298,7 @@ function possibilitiesForSingleXNew(generatedXppCollection,X)
 				}
 				var newCost = X.cost + distancematrix_1[X.vectorOfCities[X.vectorOfCities.length-2]][X.vectorOfCities[X.vectorOfCities.length-1]].distance ;
 				var newVisitedCities = X.visitedCities;
+				
 				var newX = 
 				{
 					vectorOfCities: newVectorOfCities ,
@@ -294,7 +306,7 @@ function possibilitiesForSingleXNew(generatedXppCollection,X)
 					vectorOfTime: newVectorOfTime ,
 					cost: newCost,
 					decision:X.vectorOfCities[X.vectorOfTime.length-1],
-					ifOnTime: ifOnTime(X.vectorOfCities[X.vectorOfTime.length-2], X.vectorOfTime[X.vectorOfTime.length-2]),
+					ifOnTime: ifOnTime(X.vectorOfCities[X.vectorOfTime.length-1], X.vectorOfTime[X.vectorOfTime.length-1]),
 					rejected:[]
 				};
 				generatedXppCollection = addElementToCollection (generatedXppCollection , newX);
@@ -304,7 +316,6 @@ function possibilitiesForSingleXNew(generatedXppCollection,X)
 
 function addLastPath(generatedXppCollection,X)
 {
-
 		var newVectorOfCities = new Array ( X.vectorOfCities.length + 1 );
 		for (var j = 0 ; j < X.vectorOfCities.length ; j++)
 		{
@@ -389,7 +400,8 @@ function calculateWay(uVector,step)
 function drawPath()
 {
 	var route = [];
-	if(!isNaN(uOptimal[0]))
+	
+	if(!isNaN(uOptimal[0]) && XCollectionTable[0][0].ifOnTime)
 	{
 		var now = new Date();
 		console.log('Choose path: ');
